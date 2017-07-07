@@ -1,14 +1,14 @@
 # EasyEloquent
 
-##Installation
+## Installation
 Just write your database parameteres under constructor function In Model.php file.
 '''php
   $this->con = mysqli_connect("localhost", "root", "", "test");
 '''
 
-##features
+## features
   Relationships: BelongsTo-hasMany; Database:findOrFail-where-orderby-limit; 
-##Examples
+## Examples
 
 '''php
   class User extends Model{
