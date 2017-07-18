@@ -38,7 +38,7 @@ class Model{
 	    if(method_exists($this, $key)){
 	    	// $this->$key = $key;
 	    	// return;
-	    	return $this->$key();
+	    	return $this->$key()->get();
 	    }
 	}
 
@@ -60,7 +60,13 @@ class Model{
 			$value = $operator;
 			$operator = "=";
 		}
-		$instance->query .= "WHERE " . $field. " " . 
+		$pos = strrpos($instance->query, "WHERE");
+		if($pos){
+			$search_op = "AND";
+		}else{
+			$search_op = "WHERE";
+		}
+		$instance->query .= $search_op." " . $field. " " . 
 		$operator . " '" . $value."' ";
 		return $instance;
 	}
@@ -95,15 +101,15 @@ class Model{
 	}
 	public function belongsTo($className,$column = null){
 		$ltableName = strtolower($className);
+		$index = $ltableName. "_id";
 		if(isset($column)){
-			return $className::findOrFail($this->$column);
+			return $className::where($column,$index);
 		}else{
-			$index = $ltableName. "_id";
-			return $className::where('id', $this->$index)->get()[0];
+			return $className::where('id', $index);
 		}
 	}
 	public function hasMany($className){
 		$ltableName = strtolower(get_called_class());
-		return $className::where($ltableName."_id", $this->id)->get();
+		return $className::where($ltableName."_id", $this->id);
 	}
 }

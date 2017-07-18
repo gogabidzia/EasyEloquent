@@ -23,5 +23,5 @@ include 'Model.php';
 		echo "</pre>";
 	}
 	$user = User::findOrFail(1);
-	wrap($user->todos);
+	wrap($user->todos()->orderBy('title','asc')->get());
 ?>
