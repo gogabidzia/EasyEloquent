@@ -1,4 +1,4 @@
-<?php 
+<?php
 class Model{
 	protected $fillable = [];
 	protected $table;
@@ -71,7 +71,23 @@ class Model{
 		return $instance;
 	}
 	public function save(){
-
+		$instance = isset($this)?$this:self::getCallingClass();
+		$fill = [];
+		foreach ($this->fillable as $fillable) {
+			array_push($fill,$this->$fillable);
+		}
+		$sql = "INSERT INTO " . $this->table . ' (';
+		$sql.=implode(',', $this->fillable);
+		$sql.=') VALUES (';
+		$sql.='"'.implode('" , "', $fill).'"';
+		$sql.=')';
+		mysqli_query($this->con, $sql);
+		return true;
+	}
+	public function truncate(){
+		$instance = isset($this)?$this:self::getCallingClass();
+		$sql = "TRUNCATE ". $instance->table;
+		mysqli_query($instance->con, $sql);
 	}
 	public function orderBy($field, $ascdesc){
 		$instance = isset($this)?$this:self::getCallingClass();
@@ -109,7 +125,7 @@ class Model{
 		}
 	}
 	public function hasMany($className){
-		$ltableName = strtolower(get_called_class());
-		return $className::where($ltableName."_id", $this->id);
+		$ltableName = explode('\\',strtolower(get_called_class()));
+		return $className::where($ltableName[count($ltableName)-1]."_id", $this->id);
 	}
 }
